@@ -5,7 +5,13 @@ pub struct Numeric;
 
 impl PatternElems for Numeric {
     fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(|it| it.any(|c| c.is_numeric()))
+        Box::new(|it| {
+            if let Some(c) = it.next() {
+                c.is_numeric()
+            } else {
+                false
+            }
+        })
     }
 }
 
@@ -14,7 +20,13 @@ pub struct AlphaNumeric;
 
 impl PatternElems for AlphaNumeric {
     fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(|it| it.any(|c| c.is_alphanumeric() || c == '_'))
+        Box::new(|it| {
+            if let Some(c) = it.next() {
+                c.is_alphanumeric() || c == '_'
+            } else {
+                false
+            }
+        })
     }
 }
 
@@ -23,6 +35,6 @@ pub struct Literal(pub char);
 
 impl PatternElems for Literal {
     fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(move |it| it.any(|c| c == self.0))
+        Box::new(move |it| it.next() == Some(self.0))
     }
 }
