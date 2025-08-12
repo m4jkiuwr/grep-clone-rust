@@ -16,7 +16,13 @@ impl Into<PositiveGroup> for Vec<char> {
 
 impl PatternElems for PositiveGroup {
     fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(move |it| it.any(|c| self.0.contains(&c)))
+        Box::new(move |it| {
+            if let Some(c) = it.next() {
+                self.0.contains(&c)
+            } else {
+                false
+            }
+        })
     }
 }
 
@@ -35,6 +41,12 @@ impl Into<NegativeGroup> for Vec<char> {
 
 impl PatternElems for NegativeGroup {
     fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(move |it| it.any(|c| !self.0.contains(&c)))
+        Box::new(move |it| {
+            if let Some(c) = it.next() {
+                !self.0.contains(&c)
+            } else {
+                false
+            }
+        })
     }
 }
