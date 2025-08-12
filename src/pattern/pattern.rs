@@ -59,7 +59,13 @@ impl From<&str> for Pattern {
 
 impl Pattern {
     pub fn inside(&self, text: &str) -> bool {
-        let mut it = text.chars();
-        self.content.iter().all(|f| f(&mut it))
+        (0..text.len()).any(|offset| {
+            if text.is_char_boundary(offset) {
+                let mut it = text[offset..].chars();
+                self.content.iter().all(|f| f(&mut it))
+            } else {
+                false
+            }
+        })
     }
 }
