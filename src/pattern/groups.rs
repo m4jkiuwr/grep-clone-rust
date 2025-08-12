@@ -1,4 +1,4 @@
-use super::PatternElems;
+use super::{Matcher, PatternElems};
 use std::collections::HashSet;
 
 #[derive(Debug)]
@@ -15,8 +15,14 @@ impl Into<PositiveGroup> for Vec<char> {
 }
 
 impl PatternElems for PositiveGroup {
-    fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(move |it| it.any(|c| self.0.contains(&c)))
+    fn matcher(self) -> Matcher {
+        Box::new(move |it, _offset| {
+            if let Some(c) = it.next() {
+                self.0.contains(&c)
+            } else {
+                false
+            }
+        })
     }
 }
 
@@ -34,7 +40,13 @@ impl Into<NegativeGroup> for Vec<char> {
 }
 
 impl PatternElems for NegativeGroup {
-    fn matcher(self) -> Box<dyn Fn(&mut std::str::Chars) -> bool> {
-        Box::new(move |it| it.any(|c| !self.0.contains(&c)))
+    fn matcher(self) -> Matcher {
+        Box::new(move |it, _offset| {
+            if let Some(c) = it.next() {
+                !self.0.contains(&c)
+            } else {
+                false
+            }
+        })
     }
 }
