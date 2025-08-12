@@ -1,13 +1,11 @@
-use super::PatternElems;
+use super::{Matcher, PatternElems};
 
-use super::{classes::*, groups::*};
-
-use std::str::Chars;
+use super::{anchors::*, classes::*, groups::*};
 
 const CLASSES: &str = "dw";
 
 pub struct Pattern {
-    content: Vec<Box<dyn Fn(&mut Chars) -> bool>>,
+    content: Vec<Matcher>,
 }
 
 impl From<&str> for Pattern {
@@ -16,6 +14,8 @@ impl From<&str> for Pattern {
         let mut content = vec![];
         while let Some(x) = it.next() {
             let next_elem = match x {
+                '^' => StartOfString.matcher(),
+                '$' => EndOfLine.matcher(),
                 '[' => {
                     let positive = match it.peek() {
                         Some('^') => {
@@ -59,7 +59,13 @@ impl From<&str> for Pattern {
 
 impl Pattern {
     pub fn inside(&self, text: &str) -> bool {
-        let mut it = text.chars();
-        self.content.iter().all(|f| f(&mut it))
+        (0..text.len()).any(|offset| {
+            if text.is_char_boundary(offset) {
+                let mut it = text[offset..].chars();
+                self.content.iter().all(|f| f(&mut it, offset))
+            } else {
+                false
+            }
+        })
     }
 }
