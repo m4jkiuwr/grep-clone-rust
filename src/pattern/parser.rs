@@ -1,4 +1,4 @@
-use crate::pattern::states::{EndAnchor, StartAnchor, ZeroOrOne};
+use crate::pattern::states::{EndAnchor, StartAnchor, Wildcard, ZeroOrOne};
 
 use super::automata::*;
 use super::{AlphaNum, Digit, Literal, NegativeGroup, OneOrMore, PositiveGroup};
@@ -57,6 +57,7 @@ impl<'a> From<&'a str> for ReAutomata<'a> {
                 },
                 '^' => Box::new(StartAnchor::new(reference, reference + 1)),
                 '$' => Box::new(EndAnchor::new(reference, reference + 1)),
+                '.' => Box::new(Wildcard::new(reference, reference + 1)),
 
                 _ => Box::new(Literal::new(x, reference, reference + 1)),
             };
