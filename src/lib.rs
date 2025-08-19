@@ -1,7 +1,7 @@
 mod pattern;
-use pattern::Pattern;
+use pattern::ReAutomata;
 
-pub fn find_pattern(input_line: &str, pattern: &str) -> bool {
-    let pattern = Pattern::from(pattern);
-    pattern.inside(input_line)
+pub fn find_pattern(input_line: String, pattern: &str) -> bool {
+    let mut automata = ReAutomata::from(pattern);
+    automata.run(&input_line.chars().collect::<Vec<char>>())
 }
