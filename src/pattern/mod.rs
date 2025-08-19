@@ -1,9 +1,9 @@
-mod anchors;
-mod classes;
-mod groups;
-mod pattern;
-mod pattern_elems;
+// mod anchors;
+mod automata;
+mod parser;
+mod states;
 
-use pattern_elems::{Matcher, PatternElems};
+use automata::{ReInput, ReOutput, ReRef, State};
+use states::{AlphaNum, Digit, Literal, NegativeGroup, PositiveGroup};
 
-pub use pattern::Pattern;
+pub use automata::ReAutomata;
