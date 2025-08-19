@@ -15,7 +15,8 @@ fn main() {
 
     io::stdin().read_line(&mut input_line).unwrap();
 
-    if find_pattern(&input_line, &pattern) {
+    if find_pattern(input_line, &pattern) {
+        println!("Found");
         process::exit(0)
     } else {
         process::exit(1)
