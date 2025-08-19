@@ -9,6 +9,7 @@ mod negativegroup;
 mod one_or_more;
 mod positivegroup;
 mod startanchor;
+mod wildcard;
 mod zero_or_one;
 
 pub use alphanumeric::AlphaNum;
@@ -19,4 +20,5 @@ pub use negativegroup::NegativeGroup;
 pub use one_or_more::OneOrMore;
 pub use positivegroup::PositiveGroup;
 pub use startanchor::StartAnchor;
+pub use wildcard::Wildcard;
 pub use zero_or_one::ZeroOrOne;
