@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Debug)]
 pub struct Literal {
     literal: char,
     reference: ReRef,
