@@ -1,5 +1,5 @@
 use super::*;
-
+#[derive(Debug)]
 pub struct Wildcard {
     reference: ReRef,
     next: ReRef,
