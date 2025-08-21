@@ -1,5 +1,5 @@
 use super::*;
-
+#[derive(Debug)]
 pub struct StartAnchor {
     reference: ReRef,
     next: ReRef,

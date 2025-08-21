@@ -1,6 +1,7 @@
 use super::*;
 use std::collections::HashSet;
 
+#[derive(Debug)]
 pub struct NegativeGroup {
     group: HashSet<char>,
     reference: ReRef,
