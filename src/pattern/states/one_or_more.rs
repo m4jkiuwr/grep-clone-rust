@@ -1,6 +1,6 @@
 use super::*;
 use crate::pattern::automata::ReState;
-
+#[derive(Debug)]
 pub struct OneOrMore<'a> {
     state: Box<ReState<'a>>,
 }

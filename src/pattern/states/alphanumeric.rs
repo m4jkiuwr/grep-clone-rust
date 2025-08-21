@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Debug)]
 pub struct AlphaNum {
     reference: ReRef,
     next: ReRef,

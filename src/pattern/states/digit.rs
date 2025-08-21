@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Debug)]
 pub struct Digit {
     reference: ReRef,
     next: ReRef,
