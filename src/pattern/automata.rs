@@ -6,6 +6,7 @@ pub trait State<Input, StateRef, StateHash> {
     fn next(&self) -> StateRef;
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct ReInput<'a> {
     offset: usize,
     curr_indice: usize,
@@ -24,6 +25,12 @@ impl<'a> ReInput<'a> {
     }
     pub fn offset(&self) -> usize {
         self.offset
+    }
+    pub fn text(&self) -> &'a [char] {
+        self.text
+    }
+    pub fn curr_indice(&self) -> usize {
+        self.curr_indice
     }
 
     pub fn to_hash(&self, consumed: usize, next_state_ref: ReRef) -> ReHash {
@@ -48,9 +55,13 @@ impl ReHash {
     pub fn set_reference(&mut self, new_ref: ReRef) {
         self.state_reference = new_ref;
     }
+    pub(crate) fn to_match(&self) -> ReMatch {
+        (self.offset, self.curr_indice)
+    }
 }
 
-pub type ReOutput = bool;
+pub type ReMatch = (usize, usize);
+pub type ReOutput = Vec<ReMatch>;
 pub type ReRef = usize;
 
 pub type ReState<'a> = dyn State<ReInput<'a>, ReRef, ReHash> + 'a;
@@ -69,11 +80,12 @@ impl<'a> ReAutomata<'a> {
 }
 
 impl<'a> ReAutomata<'a> {
-    fn single_match(&mut self, text: &'a [char], offset: usize) -> ReOutput {
+    pub fn offset_match(&mut self, text: &'a [char], offset: usize) -> ReOutput {
         self.visited = HashSet::new();
 
         let init_input = ReInput::new(text, offset, offset);
         let mut state_stack: Vec<ReHash> = vec![init_input.to_hash(0, self.start_state_ref)];
+        let mut matches: ReOutput = vec![];
 
         loop {
             let hash = state_stack.pop().unwrap();
@@ -84,19 +96,22 @@ impl<'a> ReAutomata<'a> {
             let input: ReInput<'a> = hash.to_input(text);
 
             if state_ref == self.end_state_ref {
-                break true;
+                matches.push(hash.to_match());
+            } else {
+                state_stack.extend(self.get_state(state_ref).transition(input));
+                self.visited.insert(hash);
             }
-            state_stack.extend(self.get_state(state_ref).transition(input));
-            self.visited.insert(hash);
-
             if state_stack.is_empty() {
-                break false;
+                break;
             }
         }
+        matches
     }
 
-    pub fn run(&mut self, text: &'a [char]) -> ReOutput {
-        (0..text.len()).any(|offset| self.single_match(text, offset))
+    pub fn all_matches(&mut self, text: &'a [char]) -> ReOutput {
+        (0..text.len())
+            .flat_map(|offset| self.offset_match(text, offset))
+            .collect()
     }
 }
 
